@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.AccountFormFieldMapper">
+
+
+    <resultMap id="baseResultMap" type="com.ytdinfo.inndoo.modules.core.entity.AccountFormField">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="appid" jdbcType="VARCHAR" property="appid"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+
+        <result column="form_id" jdbcType="VARCHAR" property="formId"/>
+        <result column="account_id" jdbcType="VARCHAR" property="accountId"/>
+        <result column="meta_id" jdbcType="VARCHAR" property="metaId"/>
+        <result column="meta_type" jdbcType="VARCHAR" property="metaType"/>
+        <result column="meta_title" jdbcType="VARCHAR" property="metaTitle"/>
+        <result column="field_short_data" jdbcType="VARCHAR" property="fieldShortData"/>
+        <result column="field_data" jdbcType="VARCHAR" property="fieldData"/>
+        <result column="form_name" jdbcType="VARCHAR" property="formName"/>
+
+    </resultMap>
+
+    <select id="findWithFormByAccount" resultMap="baseResultMap" parameterType="com.ytdinfo.inndoo.modules.core.entity.Account">
+        SELECT formfieid.*,
+               form.name AS form_name
+        FROM t_account_form_field formfieid
+                 LEFT JOIN t_account_form form ON formfieid.form_id = form.id
+        WHERE formfieid.is_deleted = 0 and formfieid.account_id = #{id}
+        AND   formfieid.appid =#{appid}
+    </select>
+
+    <update id="aesDataSwitchPassword" parameterType="java.util.Map" >
+          UPDATE t_account_form_field set field_data = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(field_data), #{oldpassword}), #{newpassword})))  where field_data>'' AND AES_DECRYPT(UNHEX(field_data), #{oldpassword})>'' ;
+          UPDATE t_account_form_field set field_short_data = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(field_short_data),#{oldpassword}), #{newpassword})))   where field_short_data>'' AND AES_DECRYPT(UNHEX(field_short_data), #{oldpassword})>'' ;
+    </update>
+
+    <select id="findAccountIdsByFieldData" parameterType="java.lang.String" resultType="java.util.List">
+         select DISTINCT account_id
+         from t_account_form_field
+         where is_deleted = 0 and field_data = #{fieldData}
+    </select>
+
+</mapper>

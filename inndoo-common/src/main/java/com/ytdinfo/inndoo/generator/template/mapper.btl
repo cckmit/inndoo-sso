@@ -1,0 +1,14 @@
+package ${entity.daoPackage};
+
+import com.ytdinfo.inndoo.base.mybatis.BaseInndooMapper;
+import ${entity.entityPackage}.${entity.className};
+import org.springframework.stereotype.Repository;
+
+/**
+ * ${entity.description}数据处理层
+ * @author ${entity.author}
+ */
+@Repository
+public interface ${entity.className}Mapper extends BaseInndooMapper<${entity.className}> {
+
+}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.AccountFormMapper">
+    <update id="updateStatus" parameterType="java.util.Map">
+       update t_account_form set is_default = 0
+       where is_default = 1 and form_type = #{formType} and appid =  #{appid}
+    </update>
+
+    <select id="findByMap" resultType="com.ytdinfo.inndoo.modules.core.entity.AccountForm" parameterType="java.util.Map">
+        select id,create_by,create_time, is_deleted,update_by,update_time,appid,end_date,end_time,name, remark,start_date,type,
+        start_time,status,title,agreement,enable_agreement,enable_captcha,form_type,is_default,is_identifier_form,platform_limit,redirect_url
+        from t_account_form
+        where is_deleted = 0
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="formType != null">
+            and form_type = #{formType}
+        </if>
+        <if test="isDefault != null">
+            and is_default = #{isDefault}
+        </if>
+        <if test="isIdentifierForm != null">
+            and is_identifier_form = #{isIdentifierForm}
+        </if>
+        <if test="startEndDate != null">
+            and end_date &gt;= #{startEndDate}
+        </if>
+        <if test="endStartDate != null">
+            and start_date &lt;= #{endStartDate}
+        </if>
+    </select>
+
+    <select id="selectCountByMap" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(1)
+        from t_account_form
+        where is_deleted = 0
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="formType != null">
+            and form_type = #{formType}
+        </if>
+        <if test="isDefault != null">
+            and is_default = #{isDefault}
+        </if>
+        <if test="isIdentifierForm != null">
+            and is_identifier_form = #{isIdentifierForm}
+        </if>
+        <if test="startEndDate != null">
+            and end_date &gt;= #{startEndDate}
+        </if>
+        <if test="endStartDate != null">
+            and start_date &lt;= #{endStartDate}
+        </if>
+    </select>
+</mapper>

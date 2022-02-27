@@ -1,0 +1,24 @@
+<template>
+import { getRequest, postRequest, putRequest, deleteRequest, importRequest, uploadFileRequest } from '@/libs/axios';
+
+// 分页获取消息数据
+export const getWxopenComponentInfo = (params) => {
+    return getRequest('/wxopenComponentInfo/listByCondition', params)
+}
+// 获取单个消息详情
+export const getWxopenComponentInfoById = (id, params) => {
+    return getRequest(`/message/query/${id}`, params)
+}
+// 添加消息
+export const addWxopenComponentInfo = (params) => {
+    return postRequest('/wxopenComponentInfo/save', params)
+}
+// 编辑消息
+export const editWxopenComponentInfo = (params) => {
+    return putRequest('/wxopenComponentInfo/update', params)
+}
+// 删除消息
+export const deleteWxopenComponentInfo = (ids, params) => {
+    return deleteRequest(`/wxopenComponentInfo/batch_delete/${ids}`, params)
+}
+</template>

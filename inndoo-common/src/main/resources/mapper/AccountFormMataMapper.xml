@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.AccountFormMetaMapper">
+
+    <update id="deleteByAccountFormId">
+      update  t_account_form_meta set is_deleted = 1
+      WHERE account_form_id = #{accountFormId}
+    </update>
+
+    <select id="selectAccountFormMetasByAccountFormId" parameterType="java.lang.String"
+            resultType="com.ytdinfo.inndoo.modules.core.entity.AccountFormMeta">
+    select afm.id,afm.create_by,afm.create_time,afm.is_deleted,afm.update_by,afm.update_time,afm.sort_order,
+    afm.account_form_id,afm.is_required,afm.meta_data,afm.meta_desc,afm.meta_type,afm.title,afm.meta_type,
+    afm.required_notice,afm.max_length,afm.min_length,afm.place_holder,afm.is_standard,afm.sort_order,afm.is_identifier
+    from t_account_form_meta afm where afm.account_form_id = #{accountFormId} and afm.is_deleted = 0
+    order by afm.sort_order, afm.create_time
+    </select>
+</mapper>

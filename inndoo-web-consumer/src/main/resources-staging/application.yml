@@ -1,0 +1,57 @@
+server:
+  port: 5032
+  servlet:
+    context-path: /core-consumer/
+    # 文件大小上传配置
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+# xxl-conf
+xxl.conf.admin.address: http://conf.inndoo.ytdinfo.com.cn/conf
+xxl.conf.env: staging
+xxl.conf.access.token: kZxhaVlPXzXMXhekDOaBz6zXaihnlg3B
+xxl.conf.mirrorfile: application.properties
+spring:
+  jpa:
+    # 显示sql
+    show-sql: false
+    # 自动生成表结构
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  # 工作流
+  activiti:
+    check-process-definitions: false
+    db-identity-used: false
+    # 自动生成Activiti相关表 第一次生成后建议关闭提高运行速度
+    database-schema-update: false
+    history-level: full
+  jackson:
+    time-zone: GMT+8
+# Actuator
+management:
+  health:
+    status:
+      http-mapping:
+        DOWN: 200
+        OUT_OF_SERVICE: 200
+        FATAL: 200
+        UNKNOWN: 200
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /actuator/
+      exposure:
+        include: '*'
+# Mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+# 日志
+logging:
+  file: inndoo-logs/inndoo.log

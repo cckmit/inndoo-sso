@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.base.dao.mapper.SettingsMapper">
+
+    <select id="selectByKeyName" resultType="com.ytdinfo.inndoo.modules.base.entity.Settings">
+      SELECT s.id,s.key_name,s.value,s.create_time
+      from t_settings s where s.is_deleted = 0 and s.key_name = #{keyName}
+    </select>
+
+    <select id="selectListByLikeKeyName" resultType="com.ytdinfo.inndoo.modules.base.entity.Settings">
+      SELECT s.id,s.key_name,s.value,s.create_time
+      from t_settings s where s.is_deleted = 0 and s.key_name like #{keyName}
+    </select>
+</mapper>

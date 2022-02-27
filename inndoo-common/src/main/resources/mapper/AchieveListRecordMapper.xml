@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.AchieveListRecordMapper">
+
+    <delete id="batchDeleteByIdentifierAndListId" parameterType="java.util.Map" >
+        DELETE FROM t_achieve_list_record_2
+        WHERE identifier IN
+        <foreach close=")" collection="list" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+        <if test="listId != null and listId != ''">
+            and list_id = #{listId}
+        </if>
+    </delete>
+
+    <delete id="batchDeleteByListId" parameterType="java.lang.String">
+        DELETE FROM  t_achieve_list_record_2
+        WHERE  list_id=#{listId}  limit 3000
+    </delete>
+
+
+    <select id="countByListId" parameterType="string" resultType="long">
+        SELECT  COUNT(1) FROM     t_achieve_list_record_2
+        WHERE list_id =#{listId}
+    </select>
+
+    <select id="stockByListId" parameterType="string" resultType="java.lang.Integer">
+        SELECT SUM(times) FROM     t_achieve_list_record
+        WHERE list_id =#{listId}
+    </select>
+
+    <select id="getredpackamount" parameterType="string" resultType="java.math.BigDecimal">
+        SELECT SUM(times) FROM     t_achieve_list_record_2
+        WHERE list_id =#{listId}
+    </select>
+
+
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert ignore into t_achieve_list_record_2
+        (id, create_by, create_time, is_deleted, update_by, update_time, identifier, list_id, status, appid, times, push_act)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.isDeleted},
+            #{item.updateBy},
+            #{item.updateTime},
+            #{item.identifier},
+            #{item.listId},
+            #{item.status},
+            #{item.appid},
+            #{item.times,jdbcType=DECIMAL},
+            #{item.pushAct}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="aesDataSwitchPassword" parameterType="java.util.Map" >
+        UPDATE t_achieve_list_record_2  c set c.identifier = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(c.identifier),#{oldpassword}),#{newpassword}))) where c.list_id=#{listId}  AND AES_DECRYPT(UNHEX( c.identifier), #{oldpassword})>'';
+        UPDATE t_achieve_list_extend_record  c set c.identifier = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(c.identifier),#{oldpassword}),#{newpassword}))) where c.list_id=#{listId}  AND AES_DECRYPT(UNHEX( c.identifier), #{oldpassword})>'';
+        UPDATE t_achieve_list_extend_record   set record = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(record),#{oldpassword}),#{newpassword}))) where record>''  AND AES_DECRYPT(UNHEX( record), #{oldpassword})>''  and  list_id=#{listId} ;
+    </update>
+
+</mapper>

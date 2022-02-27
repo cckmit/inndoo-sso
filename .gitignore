@@ -1,0 +1,6 @@
+.idea
+inndoo-logs
+*.iml
+target
+application.properties
+*.diff

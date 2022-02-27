@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.WhiteListMapper">
+
+    <select id="countBylistTypeAndlistId" parameterType="java.util.Map" resultType="long">
+        select sum(t.num)
+        from (
+                 select count(1) as num
+                 from t_white_list
+                 where link_type = #{linkType,jdbcType=INTEGER}
+                   and link_id = #{linkId,jdbcType=VARCHAR}
+                 union all
+                 select count(1) as num
+                 from t_limit_list
+                 where link_type = #{linkType,jdbcType=INTEGER}
+                   and link_id = #{linkId,jdbcType=VARCHAR}
+                 union all
+                 select count(1) as num
+                 from t_achieve_list
+                 where link_type = #{linkType,jdbcType=INTEGER}
+                   and link_id = #{linkId,jdbcType=VARCHAR}
+        ) t
+    </select>
+    <select id="queryByMap" resultType="com.ytdinfo.inndoo.modules.core.entity.WhiteList" parameterType="java.util.Map">
+        select id,name,list_type, form_id,list_type,is_times,validate_fields,link_type
+
+        from t_white_list
+        where is_deleted = 0
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="formId != null and formId != ''">
+            and form_id = #{formId}
+        </if>
+        <if test="validateFields != null and validateFields != ''">
+            and validate_fields = #{validateFields}
+        </if>
+        <if test="listType != null ">
+            and list_type = #{listType}
+        </if>
+        <if test="linkType != null">
+            and link_type = #{linkType}
+        </if>
+        <if test="isTimes != null">
+            and is_times = #{isTimes}
+        </if>
+    </select>
+
+    <select id="countByAppidAndName" resultType="java.lang.Long" parameterType="java.util.Map">
+        select count(1)
+        from t_white_list
+        where 1 = 1
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="formId != null and formId != ''">
+            and form_id = #{formId}
+        </if>
+        <if test="validateFields != null and validateFields != ''">
+            and validate_fields = #{validateFields}
+        </if>
+        <if test="listType != null ">
+            and list_type = #{listType}
+        </if>
+        <if test="linkType != null">
+            and link_type = #{linkType}
+        </if>
+        <if test="isTimes != null">
+            and is_times = #{isTimes}
+        </if>
+    </select>
+
+</mapper>

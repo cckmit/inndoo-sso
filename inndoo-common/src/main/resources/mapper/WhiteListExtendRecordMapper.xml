@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.WhiteListExtendRecordMapper">
+
+    <delete id="batchDeleteByIdentifiersAndListId"  parameterType="java.util.Map">
+        DELETE FROM t_white_list_extend_record
+        WHERE
+        <if test="listId != null and listId != ''">
+             list_id = #{listId}
+        </if>
+        and identifier IN
+        <foreach close=")" collection="list" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="batchDeleteByListId" parameterType="java.lang.String">
+        DELETE FROM  t_white_list_extend_record
+        WHERE  list_id=#{listId} limit 10000
+    </delete>
+
+    <select id="findTransformDate" parameterType="java.util.Map" resultType="map">
+        select
+        <foreach collection="formMetas" item="forMeta" separator=",">
+            MAX( case when ext.meta_code=#{forMeta.metaType} then ext.record else '' end ) as ${forMeta.metaType}
+        </foreach>
+        ,rec.times
+        ,rec.identifier,
+        MAX(rec.update_time) update_time,
+        MAX(rec.create_time) create_time
+        from
+        (SELECT * from t_white_list_record where list_id = #{listId} AND identifier > #{id} ORDER BY identifier ASC
+        limit #{pageIndex},#{pageSize} ) rec
+        left join t_white_list_extend_record ext ON rec.list_id = ext.list_id AND rec.identifier=ext.identifier
+        GROUP BY
+        rec.identifier,
+        rec.times
+    </select>
+</mapper>

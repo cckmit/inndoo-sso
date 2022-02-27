@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.SmsCaptchaLogMapper">
+    <select id="listForHelper" resultType="com.ytdinfo.inndoo.common.vo.SmsCaptchaLogVo">
+select * from t_sms_captcha_log where phone = #{searchVo.phone}
+and tenant_id = #{searchVo.tenantId}
+and appid = #{searchVo.appid}
+and send_status != 0
+and is_deleted = 0
+    </select>
+</mapper>

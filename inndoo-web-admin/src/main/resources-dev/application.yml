@@ -1,0 +1,74 @@
+server:
+  port: 5030
+  servlet:
+    context-path: /core-admin/
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+# xxl-conf
+xxl.conf.admin.address: http://conf.inndoo.ytdinfo.com.cn/conf
+xxl.conf.env: dev
+xxl.conf.access.token: kZxhaVlPXzXMXhekDOaBz6zXaihnlg3B
+xxl.conf.mirrorfile: application.properties
+#sso
+#ytd.sso.server.url: http://ytdsso.dev.ytdinfo.com.cn/sso
+#ytd.sso.server.logout.url: http://ytdsso.dev.ytdinfo.com.cn/login
+#ytd.actSso.server.url: http://dev.inndoo.ytdinfo.com.cn/activity-admin
+#ytd.actSso.server.logout.url: http://act.dev.inndoo.ytdinfo.com.cn/login
+#ytd.sso.server.url: http://localhost:5012/sso
+#ytd.sso.server.logout.url: http://localhost:3010/login
+#ytd.actSso.server.url: http://localhost:5041/activity-admin
+#ytd.actSso.server.logout.url: http://localhost:3040/login
+#ytd.sso.server.expire.seconds: 3
+#ytd.actSso.server.expire.seconds: 3
+#ytd.sso.appcode: core
+spring:
+  jpa:
+    # 显示sql
+    show-sql: false
+    # 自动生成表结构
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      jdbc:
+        time_zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+  # 工作流
+  activiti:
+    check-process-definitions: false
+    db-identity-used: true
+    # 自动生成Activiti相关表 第一次生成后建议关闭提高运行速度
+    database-schema-update: true
+    history-level: full
+  jackson:
+    time-zone: GMT+8
+# Actuator
+management:
+  health:
+    status:
+      http-mapping:
+        DOWN: 200
+        OUT_OF_SERVICE: 200
+        FATAL: 200
+        UNKNOWN: 200
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /actuator/
+      exposure:
+        include: '*'
+# Mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  global-config:
+    db-config:
+      update-strategy: NOT_EMPTY
+# 日志
+logging:
+  file: inndoo-logs/inndoo.log

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.AccountMapper">
+
+    <select id="findByMap" resultType="com.ytdinfo.inndoo.modules.core.entity.Account" parameterType="java.util.Map">
+        select id,create_by createBy,create_time createTime, is_deleted isDeleted,update_by updateBy,update_time updateTime,
+        address ,bankcard_no bankcardNo,birthday,customer_no customerNo,email,idcard_no idcardNo,idcard_photo idcardPhoto,
+        identifier,license_plate_no licensePlateNo,name,phone,sex,appid,is_staff isStaff,staff_no staffNo,dept_no deptNo
+        from t_account
+        where is_deleted = 0
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="address != null and address != ''">
+            and address = #{address}
+        </if>
+        <if test="bankcardNo != null and bankcardNo != ''">
+            and bankcard_no = #{bankcardNo}
+        </if>
+        <if test="birthday != null and birthday != ''">
+            and birthday = #{birthday}
+        </if>
+        <if test="customerNo != null and customerNo != ''">
+            and customer_no = #{customerNo}
+        </if>
+        <if test="email != null and email != ''">
+            and email = #{email}
+        </if>
+        <if test="idcardNo != null and idcardNo != ''">
+            and idcard_no = #{idcardNo}
+        </if>
+        <if test="idcardPhoto != null and idcardPhoto != ''">
+            and idcard_photo = #{idcardPhoto}
+        </if>
+        <if test="idcardPhoto != null and idcardPhoto != ''">
+            and idcard_photo = #{idcardPhoto}
+        </if>
+        <if test="identifier != null and identifier != ''">
+            and identifier = #{identifier}
+        </if>
+        <if test="licensePlateNo != null and licensePlateNo != ''">
+            and license_plate_no = #{licensePlateNo}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        <if test="sex != null and sex != ''">
+            and sex = #{sex}
+        </if>
+        <if test="isStaff != null">
+            and is_staff = #{is_staff}
+        </if>
+        <if test="staffNo != null and staffNo != ''">
+            and staff_no = #{staffNo}
+        </if>
+        <if test="deptNo != null and deptNo != ''">
+            and dept_no = #{deptNo}
+        </if>
+        <if test="checkId != null and checkId != ''">
+            AND id &lt; #{checkId}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and create_time &gt;= date_format(#{startDate},'%Y-%c-%d %H:%i:%s')
+        </if>
+        <if test="endDate != null and endDate != '' ">
+            and create_time &lt;= date_format(#{endDate},'%Y-%c-%d 23:59:59')
+        </if>
+        <if test="null != accountIds ">
+            id IN
+            <foreach close=")" collection="accountIds" item="item" open="(" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY id desc
+        <if test="page != null and pageSize!=null ">
+            limit #{page},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countByCreateTime" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_account
+        WHERE is_deleted = 0
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND create_time >= #{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+
+    <update id="aesDataSwitchPassword" parameterType="java.util.Map" >
+         UPDATE t_account  set phone = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(phone), #{oldpassword}),#{newpassword}))) where phone>'' AND AES_DECRYPT(UNHEX(phone), #{oldpassword})>'' ;
+         UPDATE t_account  set  bankcard_no = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(bankcard_no),#{oldpassword}),#{newpassword})))  where bankcard_no>'' AND AES_DECRYPT(UNHEX(bankcard_no), #{oldpassword})>'' ;
+         UPDATE t_account  set customer_no = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(customer_no),#{oldpassword}),#{newpassword}))) where customer_no>''  AND AES_DECRYPT(UNHEX(customer_no), #{oldpassword})>'' ;
+         UPDATE t_account  set name = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(name),#{oldpassword}),#{newpassword}))) where name>''  AND AES_DECRYPT(UNHEX(name), #{oldpassword})>'' ;
+         UPDATE t_account  set staff_no = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(staff_no),#{oldpassword}),#{newpassword}))) where staff_no>''  AND AES_DECRYPT(UNHEX(staff_no), #{oldpassword})>'' ;
+         UPDATE t_account  set address = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(address),#{oldpassword}),#{newpassword}))) where address>''  AND AES_DECRYPT(UNHEX(address), #{oldpassword})>'' ;
+         UPDATE t_account  set birthday = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(birthday),#{oldpassword}),#{newpassword}))) where birthday>''  AND AES_DECRYPT(UNHEX(birthday), #{oldpassword})>'' ;
+         UPDATE t_account  set email = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(email),#{oldpassword}),#{newpassword}))) where email>''  AND AES_DECRYPT(UNHEX(email), #{oldpassword})>'' ;
+         UPDATE t_account  set sex = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(sex),#{oldpassword}),#{newpassword}))) where sex>''  AND AES_DECRYPT(UNHEX(sex), #{oldpassword})>'' ;
+         UPDATE t_account  set license_plate_no = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(license_plate_no),#{oldpassword}),#{newpassword}))) where license_plate_no>''  AND AES_DECRYPT(UNHEX(license_plate_no), #{oldpassword})>'' ;
+         UPDATE t_account  set dept_no = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(dept_no),#{oldpassword}),#{newpassword}))) where dept_no>''  AND AES_DECRYPT(UNHEX(dept_no), #{oldpassword})>'' ;
+         UPDATE t_account  set idcard_no = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(idcard_no),#{oldpassword}),#{newpassword})))  where idcard_no>''  AND AES_DECRYPT(UNHEX(idcard_no), #{oldpassword})>'' ;
+    </update>
+
+    <delete id="deleteById" >
+         DELETE FROM t_account WHERE id=#{id}
+    </delete>
+
+</mapper>

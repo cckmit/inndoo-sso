@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.StaffRoleMapper">
+
+    <resultMap id="baseResultMap" type="com.ytdinfo.inndoo.modules.core.entity.StaffRole">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="appid" jdbcType="VARCHAR" property="appid"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="staff_id" jdbcType="VARCHAR" property="staffId"/>
+        <result column="role_id" jdbcType="VARCHAR" property="roleId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+    </resultMap>
+
+    <resultMap id="stafftMap" type="com.ytdinfo.inndoo.modules.core.entity.Staff">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="appid" jdbcType="VARCHAR" property="appid"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="staff_no" jdbcType="VARCHAR" property="staffNo"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="dept_no" jdbcType="VARCHAR" property="deptNo"/>
+        <result column="account_id" jdbcType="VARCHAR" property="accountId"/>
+        <result column="qrcode" jdbcType="VARCHAR" property="qrcode"/>
+        <result column="head_img" jdbcType="VARCHAR" property="headImg"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="dept_number" jdbcType="VARCHAR" property="deptNumber"/>
+    </resultMap>
+
+
+    <resultMap id="departmentMap" type="com.ytdinfo.inndoo.modules.base.entity.Department">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="appid" jdbcType="VARCHAR" property="appid"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="dept_code" jdbcType="VARCHAR" property="deptCode"/>
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId"/>
+        <result column="is_parent" jdbcType="VARCHAR" property="isParent"/>
+        <result column="sort_order" jdbcType="VARCHAR" property="sortOrder"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+    </resultMap>
+
+    <select id="findContactStaffByDepartId"  resultMap="stafftMap" parameterType="java.lang.String">
+        select
+            ts.*,td.title as title ,td.dept_code as dept_number
+        from t_staff ts
+        inner join t_staff_role sr on ts.id = sr.staff_id
+        inner join t_role_staff rs on rs.id = sr.role_id
+        inner join t_department td on ts.dept_no = td.id
+         where
+            sr.is_deleted=0
+        and ts.is_deleted=0
+        and ts.status = 0
+        and rs.is_deleted=0
+        and td.is_deleted=0
+        and rs.code = 'STAFF_CONTACTS'
+        and ts.dept_no = #{code}
+        order by IF(ISNULL(ts.sort_order),0,1) desc,
+                 ts.sort_order asc,
+                 ts.create_time desc
+    </select>
+
+
+    <select id="findRoleByStaffId" resultMap="baseResultMap" parameterType="java.lang.String">
+       select  sr.*,rs.name as role_name from t_staff_role sr left join  t_role_staff rs on sr.role_id = rs.id
+       where  sr.staff_id = #{staffid} and sr.is_deleted=0  and rs.is_deleted=0
+    </select>
+
+    <select id="findRoleByRoleIdAndStaffId" resultMap="baseResultMap">
+       select  sr.*,rs.name as role_name from t_staff_role sr left join  t_role_staff rs on sr.role_id = rs.id
+       where  sr.staff_id = #{staffId} and sr.role_id = #{roleid} and sr.is_deleted=0  and rs.is_deleted=0
+    </select>
+
+    <select id="findRoleByRoleId" resultMap="baseResultMap" parameterType="java.lang.String">
+       select  sr.*,rs.name as role_name from t_staff_role sr left join  t_role_staff rs on sr.role_id = rs.id
+       where  sr.role_id = #{roleId} and sr.is_deleted=0  and rs.is_deleted=0
+    </select>
+
+
+    <select id="findContactDept" resultMap="departmentMap" parameterType="java.lang.String">
+       select
+            td.`id` ,
+            td.`create_by` ,
+            td.`create_time`,
+            td.`update_by` ,
+            td.`update_time`,
+            td.`parent_id` ,
+            td.`sort_order` ,
+            td.`status` ,
+            td.`title`,
+            td.`is_parent`,
+            td.`is_deleted`,
+            td.`dept_code` ,
+            td.`appid`
+       from t_staff_role sr
+       inner join t_staff ts on sr.staff_id = ts.id
+       inner join t_role_staff rs on rs.id = sr.role_id
+       inner join t_department td on ts.dept_no = td.id
+       where
+        sr.is_deleted=0
+       and ts.status = 0
+       and ts.is_deleted=0
+       and rs.is_deleted=0
+       and td.is_deleted=0
+       and rs.code = #{code}
+       and ts.dept_no != ''
+    </select>
+
+
+</mapper>

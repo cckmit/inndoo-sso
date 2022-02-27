@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.BindLogMapper">
+    <select id="listForHelper" resultType="com.ytdinfo.inndoo.common.vo.BindLogVo">
+        select * from t_bind_log where core_account_id = #{searchVo.coreAccountId}
+        and appid = #{searchVo.appid}
+        and is_deleted = 0
+    </select>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.AccountFormResourceMapper">
+
+    <update id="deleteByAccountFormId">
+      update  t_account_form_resource set is_deleted = 1
+      WHERE form_id = #{accountFormId}
+    </update>
+
+    <select id="selectAccountFormResourcesByAccountFormId" parameterType="java.lang.String"
+            resultType="com.ytdinfo.inndoo.modules.core.entity.AccountFormResource">
+    select afr.id,afr.create_by,afr.create_time,afr.is_deleted,afr.update_by,afr.update_time,afr.form_id,afr.resource_data
+    from t_account_form_resource afr where afr.form_id = #{accountFormId} and afr.is_deleted = 0
+    order by afr.create_time
+    </select>
+</mapper>

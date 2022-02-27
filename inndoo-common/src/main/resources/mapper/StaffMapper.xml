@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytdinfo.inndoo.modules.core.dao.mapper.StaffMapper">
+
+
+    <select id="listInfoForHelper" resultType="com.ytdinfo.inndoo.modules.core.entity.Staff">
+        select * from t_staff
+        where  is_deleted = 0
+        <if test="searchVo.name != null and searchVo.name != ''">
+            and name = #{searchVo.name}
+        </if>
+        <if test="searchVo.deptNo != null and searchVo.deptNo != ''">
+            and dept_no = #{searchVo.deptNo}
+        </if>
+        <if test="searchVo.phone != null and searchVo.phone != ''">
+            and phone = #{searchVo.phone} and #{searchVo.isBind} = #{searchVo.isBind}
+        </if>
+        <if test="searchVo.staffNo != null and searchVo.staffNo != ''">
+            AND staff_no like CONCAT('%',#{searchVo.staffNo},'%' )
+        </if>
+        <if test="searchVo.accountId != null and searchVo.accountId != ''">
+            and account_id = #{searchVo.accountId}
+        </if>
+        <if test="searchVo.isBind != null and searchVo.isBind == '1'.toString()">
+            and account_id <![CDATA[<>]]> ''
+        </if>
+        <if test="searchVo.isBind != null and searchVo.isBind == '2'.toString()">
+            and account_id = ''
+        </if>
+    </select>
+
+
+    <select id="findByMap" resultType="com.ytdinfo.inndoo.modules.core.entity.Staff" parameterType="java.util.Map">
+        select id,create_by,create_time,
+        is_deleted,update_by,update_time,appid,account_id,dept_no,name,phone,staff_no,status,head_img,qrcode,position,remark,tags,recommend_flag
+        from t_staff
+        where is_deleted = 0
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="deptNo != null and deptNo != ''">
+            and dept_no = #{deptNo}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        <if test="staffNo != null and staffNo != ''">
+            and staff_no = #{staffNo}
+        </if>
+        <if test="accountId != null and accountId != ''">
+            and account_id = #{accountId}
+        </if>
+        <if test="isBind != null and isBind == '1'.toString()">
+            and account_id <![CDATA[<>]]> ''
+        </if>
+        <if test="isBind != null and isBind == '2'.toString()">
+            and account_id = ''
+        </if>
+        ORDER BY id desc
+        <if test="page != null and pageSize!=null ">
+            limit #{page},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countByMap" resultType="java.lang.Integer"  parameterType="java.util.Map">
+        select count(1)
+        from t_staff
+        where is_deleted = 0
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="appid != null and appid != ''">
+            and appid = #{appid}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="deptNo != null and deptNo != ''">
+            and dept_no = #{deptNo}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        <if test="staffNo != null and staffNo != ''">
+            and staff_no = #{staffNo}
+        </if>
+        <if test="accountId != null and accountId != ''">
+            and account_id = #{accountId}
+        </if>
+        <if test="isBind != null and isBind == '1'.toString()">
+            and account_id <![CDATA[<>]]> ''
+        </if>
+        <if test="isBind != null and isBind == '2'.toString()">
+            and account_id = ''
+        </if>
+    </select>
+    <update id="batchUpdateImg">
+        insert into t_staff (id, is_deleted, account_id,dept_no,name,phone,staff_no,status,appid, head_img,qrcode) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+         (
+            #{item.id},
+            #{item.isDeleted},
+            #{item.accountId},
+            #{item.deptNo},
+            #{item.name},
+            #{item.phone},
+            #{item.staffNo},
+            #{item.status},
+            #{item.appid},
+            #{item.headImg},
+            #{item.qrcode}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE head_img = VALUES(head_img), qrcode = VALUES(qrcode);
+    </update>
+
+    <select id="findWithoutRole" resultType="com.ytdinfo.inndoo.modules.core.entity.Staff">
+        select
+            st.id,st.create_by,st.create_time,
+            st.is_deleted,st.update_by,st.update_time,
+            st.appid,st.account_id,st.dept_no,st.name,
+            st.phone,st.staff_no,st.status
+        from t_staff st left join t_staff_role sr on st.id = sr.staff_id
+        where
+        st.is_deleted = 0
+        and sr.id is null
+    </select>
+
+
+    <select id="findByStaffNo" resultType="com.ytdinfo.inndoo.modules.core.entity.Staff"
+            parameterType="java.lang.String">
+        select id,create_by,create_time, is_deleted,update_by,update_time,appid,account_id,dept_no,name,phone,staff_no,status,head_img,qrcode
+        from t_staff
+        where is_deleted = 0
+        and staff_no = #{staffNo}
+        limit 1;
+    </select>
+
+    <select id="findById" resultType="com.ytdinfo.inndoo.modules.core.entity.Staff"
+            parameterType="java.lang.String">
+        select id,create_by,create_time, is_deleted,update_by,update_time,appid,account_id,dept_no,name,phone,staff_no,status,head_img,qrcode
+        from t_staff
+        where is_deleted = 0
+        and id = #{id}
+    </select>
+
+
+    <select id="find2LevelStaffBySearchStaffDto" parameterType="com.ytdinfo.inndoo.modules.core.dto.SearchStaffDto"
+            resultType="com.ytdinfo.inndoo.modules.core.dto.StaffDto">
+        SELECT dept2.id AS branchId ,dept2.title AS branchName ,dept.id AS subBranchId ,dept.title AS subBranchName ,
+        st.id as staffId, st.`name` AS staffName ,st.account_id as coreAccountId
+        FROM t_staff st
+        INNER JOIN t_department dept ON dept.id = st.dept_no AND dept.is_deleted = 0 AND dept.status = 0
+        INNER JOIN t_department dept2 ON dept2.id = dept.parent_id AND dept2.is_deleted = 0 AND dept2.status = 0
+        WHERE st.is_deleted = 0
+        <if test="staffId != null and staffId != ''">
+            AND st.id = #{staffId,jdbcType=VARCHAR}
+        </if>
+        <if test="staffName != null and staffName != ''">
+            AND st.`name` = #{staffName,jdbcType=VARCHAR}
+        </if>
+        <if test="subBranchId != null and subBranchId != ''">
+            AND dept.id = #{subBranchId,jdbcType=VARCHAR}
+        </if>
+        <if test="branchId != null and branchId != ''">
+            AND dept2.id = #{branchId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="find3LevelStaffBySearchStaffDto" parameterType="com.ytdinfo.inndoo.modules.core.dto.SearchStaffDto"
+            resultType="com.ytdinfo.inndoo.modules.core.dto.StaffDto">
+        SELECT dept3.id AS branchId ,dept3.title AS branchName ,dept2.id AS subBranchId ,dept2.title AS subBranchName ,
+        st.id as staffId, st.`name` AS staffName ,st.account_id as coreAccountId
+        FROM t_staff st
+        INNER JOIN t_department dept ON dept.id = st.dept_no AND dept.is_deleted = 0 AND dept.status = 0
+        INNER JOIN t_department dept2 ON dept2.id = dept.parent_id AND dept2.is_deleted = 0 AND dept2.status = 0
+        INNER JOIN t_department dept3 ON dept3.id = dept2.parent_id AND dept3.is_deleted = 0 AND dept3.status = 0
+        WHERE st.is_deleted = 0
+        <if test="staffId != null and staffId != ''">
+            AND st.id = #{staffId,jdbcType=VARCHAR}
+        </if>
+        <if test="staffName != null and staffName != ''">
+            AND st.`name` = #{staffName,jdbcType=VARCHAR}
+        </if>
+        <if test="subBranchId != null and subBranchId != ''">
+            AND dept2.id = #{subBranchId,jdbcType=VARCHAR}
+        </if>
+        <if test="branchId != null and branchId != ''">
+            AND dept3.id = #{branchId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="getStaffCount" resultType="java.lang.Integer"  parameterType="java.lang.String">
+         SELECT  count(1) as count from t_staff where is_deleted = 0 and appid= #{appid}
+    </select>
+
+    <select id="getStaffData" resultType="com.ytdinfo.inndoo.modules.core.entity.Staff" parameterType="java.util.Map">
+         SELECT    id,create_by,create_time,is_deleted,update_by,update_time,appid,account_id,dept_no,name,staff_no,status  from t_staff where is_deleted = 0 and appid= #{appid}  ORDER BY  create_time  LIMIT #{start},#{end}
+    </select>
+
+    <update id="aesDataSwitchPassword" parameterType="java.util.Map" >
+        UPDATE t_staff set name = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(name),#{oldpassword}),#{newpassword}))) where name>'' AND AES_DECRYPT(UNHEX(name), #{oldpassword})>'' ;
+
+        UPDATE t_staff set phone = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(phone),#{oldpassword}),#{newpassword}))) where phone>'' AND AES_DECRYPT(UNHEX(phone), #{oldpassword})>'' ;
+
+        UPDATE t_phone_location  set phone = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(phone),#{oldpassword}),#{newpassword})))   where phone>'' AND AES_DECRYPT(UNHEX(phone), #{oldpassword})>'' ;
+
+        UPDATE t_bind_log  set phone = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(phone),#{oldpassword}),#{newpassword}))) where phone>'' AND AES_DECRYPT(UNHEX(phone), #{oldpassword})>'' ;
+
+        UPDATE t_sms_captcha_log  set phone = lower( HEX(AES_ENCRYPT(AES_DECRYPT(UNHEX(phone),#{oldpassword}),#{newpassword}))) where phone>'' AND AES_DECRYPT(UNHEX(phone), #{oldpassword})>'' ;
+    </update>
+
+
+    <select id="queryStaffByRoleCode" resultType="com.ytdinfo.inndoo.common.vo.BusinessManagerVo">
+        SELECT a.id,a.name  FROM t_staff a
+                                      INNER JOIN t_staff_role b ON a.id =  b.staff_id and b.is_deleted = 0 <if test="null != recommendFlag"> and a.recommend_flag = #{recommendFlag}</if>
+                                      INNER JOIN t_role_staff c ON b.role_id = c.id and c.`code` = #{roleCode,jdbcType=VARCHAR}
+        where a.is_deleted = 0 and a.account_id is not null and a.account_id != ''
+    </select>
+
+    <update id="updateRecommendFlag">
+        UPDATE t_staff set recommend_flag = #{recommendFlag}, update_time = now() where id = #{id}
+    </update>
+
+    <select id="validBusinessManagerByStaffId" resultType="java.lang.String">
+        SELECT a.id FROM t_staff a
+        INNER JOIN t_staff_role b ON a.id = b.staff_id and b.is_deleted = 0
+        INNER JOIN t_role_staff c ON b.role_id = c.id and c.`code` = #{roleCode,jdbcType=VARCHAR}
+        where a.is_deleted = 0 and a.account_id is not null and a.account_id != ''
+             and a.id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="searchStaffById" resultType="com.ytdinfo.inndoo.common.vo.BusinessManagerVo">
+        SELECT a.id,a.name,a.phone,a.position,a.head_img,a.remark,a.tags,a.qrcode FROM t_staff a
+        where a.id = #{id}  and a.account_id is not null and a.account_id != ''
+    </select>
+</mapper>
